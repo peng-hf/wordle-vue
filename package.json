@@ -7,7 +7,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.2.25"
+    "vite-plugin-windicss": "^1.6.3",
+    "vue": "^3.2.25",
+    "windicss": "^3.4.3"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.0.0",
