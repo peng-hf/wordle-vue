@@ -12,13 +12,13 @@ console.log(keys.value)
 
 <template>
   <div>
-    <div v-for="(_, idx) in keys" :key="idx" class="flex justify-center">
+    <div v-for="(_, row) in keys" :key="row" class="flex justify-center">
       <div
-        v-for="key in keys[idx]"
+        v-for="key in keys[row]"
         :key="key"
         :class="[
-          'h-60px w-40px m-3px flex justify-center items-center gap-3px bg-light-500 uppercase rounded-sm font-bold',
-          { '!w-80px': key === 'Enter' || key === 'Escape' }
+          'h-60px w-40px m-3px flex justify-center items-center gap-3px uppercase rounded-sm font-bold bg-light-100 text-lg dark:(bg-dark-200 text-white)',
+          { '!w-80px !text-sm': key === 'Enter' || key === 'Escape' }
         ]"
       >
         {{ key }}
