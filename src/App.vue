@@ -5,6 +5,7 @@ import Grid from './components/Grid.vue'
 import Keyboard from './components/Keyboard.vue'
 
 const darkMode = ref(true)
+const word = 'hello'
 const currentRowIdx = ref(0)
 const grid = ref(
   // eslint-disable-next-line prettier-vue/prettier
@@ -21,7 +22,7 @@ function toggleDarkMode() {
 function onPressKey(key) {
   const currentRow = grid.value[currentRowIdx.value]
   if (key === 'Backspace') {
-    let targetCell = null // find cell to clear
+    let targetCell = null // Find cell to clear
     for (let i = currentRow.length - 1; i >= 0; --i) {
       const cell = currentRow[i]
       if (cell.state !== CELL_STATE.EMPTY) {
@@ -30,18 +31,21 @@ function onPressKey(key) {
       }
     }
     if (targetCell) targetCell.clear()
+  } else if (key === 'Enter') {
+    // Validate
   } else {
-    const nextEmptyCell = currentRow.find(
-      cell => cell.state === CELL_STATE.EMPTY
-    ) // Find last empty cell
-    // console.log(currentRow)
-    // console.log(nextEmptyCell)
-    // console.log(key)
+    let nextEmptyCellIdx
+    const nextEmptyCell = currentRow.find((cell, idx) => {
+      nextEmptyCellIdx = idx
+      return cell.state === CELL_STATE.EMPTY
+    }) // Find last empty cell and get its index
 
     if (nextEmptyCell) {
       nextEmptyCell.letter = key
-      // TODO: Compute cell state
-      nextEmptyCell.state = CELL_STATE.CORRECT
+      if (word[nextEmptyCellIdx] === key) {
+        nextEmptyCell.state = CELL_STATE.CORRECT
+      } else if (word.includes(key)) nextEmptyCell.state = CELL_STATE.PRESENT
+      else nextEmptyCell.state = CELL_STATE.ABSENT
     }
   }
 }
@@ -64,7 +68,12 @@ function onPressKey(key) {
 
     <div class="flex flex-col flex-1 items-center justify-between">
       <div class="flex flex-1 items-center">
-        <grid class="my-30px" :grid="grid" />
+        <grid
+          class="my-30px"
+          :grid="grid"
+          :current-row-idx="currentRowIdx"
+          :word="word"
+        />
       </div>
       <keyboard class="my-20px" @press-key="onPressKey" />
     </div>
