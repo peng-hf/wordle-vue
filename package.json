@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {
     "eslint": "^8.9.0",
@@ -16,9 +17,11 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.0.0",
     "eslint-config-standard": "^16.0.3",
+    "eslint-config-prettier": "^8.4.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-prettier-vue": "^3.1.0",
     "eslint-plugin-vue": "^8.4.1",
     "vite": "^2.7.2"
   }

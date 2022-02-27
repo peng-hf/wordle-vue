@@ -4,7 +4,9 @@ module.exports = {
   },
   extends: [
     'standard',
-    'plugin:vue/vue3-recommended'
+    'plugin:vue/vue3-recommended',
+    'plugin:prettier-vue/recommended',
+    'prettier'
   ],
   rules: {
     // override/add rules settings here, such as:
