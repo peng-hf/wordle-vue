@@ -16,3 +16,5 @@ export class Cell {
     this.state = CELL_STATE.EMPTY
   }
 }
+
+export const WORD_LIST = []

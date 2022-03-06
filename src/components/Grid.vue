@@ -1,5 +1,5 @@
 <script setup>
-import { CELL_STATE } from '@/utils.js'
+import { CELL_STATE } from '@/util'
 defineProps(['grid', 'currentRowIdx', 'word'])
 </script>
 
@@ -10,7 +10,7 @@ defineProps(['grid', 'currentRowIdx', 'word'])
         v-for="(cell, columnIdx) in grid[rowIdx]"
         :key="columnIdx"
         :class="[
-          'h-62px w-62px flex justify-center items-center rounded-md text-30px text-white uppercase font-bold',
+          'h-62px w-62px flex justify-center items-center rounded-sm text-30px text-white uppercase font-bold',
           {
             'border-width-2 border-solid border-dark-100 ':
               cell.state === CELL_STATE.EMPTY
