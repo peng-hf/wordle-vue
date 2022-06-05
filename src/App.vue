@@ -1,25 +1,25 @@
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { allWords } from './util/words'
-import { Cell, CELL_STATE } from './util'
+import { Cell, CELL_STATE, GAME_STATE } from './util'
 import Grid from './components/Grid.vue'
 import Keyboard from './components/Keyboard.vue'
 
 const MAX_ATTEMPTS = 5
 
-const darkMode = ref(true)
+const darkMode = ref(false)
 const word = 'hello'
 const currentRowIdx = ref(0)
-const grid = ref(
-  // eslint-disable-next-line prettier-vue/prettier
+const matrix = ref(
   Array.from({ length: 6 }, () =>
     Array.from({ length: MAX_ATTEMPTS }, () => new Cell())
   )
 )
 const errors = ref([])
+const gameState = ref(GAME_STATE.PLAYING)
 
 const currentAnswer = computed(() => {
-  return grid.value[currentRowIdx.value].map(c => c.letter).join('')
+  return matrix.value[currentRowIdx.value].map(c => c.letter).join('')
 })
 
 function toggleDarkMode() {
@@ -35,8 +35,14 @@ function showError(msg) {
   }, 1200)
 }
 
+function revealRow(matrixRow) {
+  for (const c of matrixRow) {
+    c.reveal = true
+  }
+}
+
 function onPressKey(key) {
-  const currentRow = grid.value[currentRowIdx.value]
+  const currentRow = matrix.value[currentRowIdx.value]
   if (key === 'Backspace') {
     let targetCell = null // Find cell to clear
     for (let i = currentRow.length - 1; i >= 0; --i) {
@@ -49,16 +55,18 @@ function onPressKey(key) {
     if (targetCell) targetCell.clear()
   } else if (key === 'Enter') {
     if (currentAnswer.value === word) {
-      console.log('WIN!')
+      gameState.value = GAME_STATE.WIN
+      revealRow(currentRow)
+    } else if (currentRowIdx.value === MAX_ATTEMPTS) {
+      gameState.value = GAME_STATE.GAME_OVER
+      revealRow(currentRow)
     } else if (currentAnswer.value.length < word.length) {
       showError('Not enough letter')
     } else if (!allWords.includes(currentAnswer.value)) {
       showError('Not in the word list')
     } else {
-      if (currentRowIdx.value + 1 < MAX_ATTEMPTS) currentRowIdx.value++
-      else {
-        console.log('GAME OVER!')
-      }
+      currentRowIdx.value++
+      revealRow(currentRow)
     }
   } else {
     // Type a new letter
@@ -83,11 +91,11 @@ function onPressKey(key) {
   <div
     class="relative h-screen w-screen flex flex-col bg-light-600 dark:bg-dark-900"
   >
-    <div class="absolute h-full w-full flex flex-col top-1/6">
+    <div class="absolute w-full flex flex-col pt-1/6">
       <div
         v-for="(error, idx) in errors"
         :key="idx"
-        class="bg-light-500 self-center py-10px px-20px rounded-sm font-bold mt-10px"
+        class="self-center py-10px px-20px rounded-sm font-bold mt-10px bg-dark-400 text-white dark:(bg-light-400 text-black)"
       >
         {{ error.msg }}
       </div>
@@ -95,7 +103,7 @@ function onPressKey(key) {
 
     <!-- Header -->
     <div
-      class="h-60px flex justify-between items-center bg-light-700 text-3xl font-semi-bold dark:(bg-dark-400 text-light-50)"
+      class="h-60px flex justify-between items-center bg-light-700 text-3xl font-semi-bold dark:(bg-dark-400 text-white)"
     >
       <div class="w-50px text-center" />
       <div>Wordle For Fun</div>
@@ -110,15 +118,12 @@ function onPressKey(key) {
       <div class="flex flex-1 items-center">
         <grid
           class="my-30px"
-          :grid="grid"
+          :matrix="matrix"
           :current-row-idx="currentRowIdx"
           :word="word"
         />
       </div>
-      <keyboard class="my-20px" @press-key="onPressKey" />
+      <keyboard class="my-20px" :matrix="matrix" @press-key="onPressKey" />
     </div>
   </div>
 </template>
-
-<style>
-</style>

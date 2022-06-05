@@ -5,10 +5,17 @@ export const CELL_STATE = {
   CORRECT: 'CORRECT'
 }
 
+export const GAME_STATE = {
+  PLAYING: 'PLAYING',
+  GAME_OVER: 'GAME_OVER',
+  WIN: 'WIN'
+}
+
 export class Cell {
   constructor() {
     this.letter = ''
     this.state = CELL_STATE.EMPTY
+    this.reveal = false
   }
 
   clear() {
@@ -18,3 +25,10 @@ export class Cell {
 }
 
 export const WORD_LIST = []
+
+export function getCellBgColor(state) {
+  if (state === CELL_STATE.CORRECT) return 'bg-lime-600'
+  if (state === CELL_STATE.PRESENT) return 'bg-orange-500'
+  if (state === CELL_STATE.ABSENT) return 'bg-dark-600'
+  return ''
+}
