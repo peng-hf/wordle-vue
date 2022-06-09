@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { allWords } from './util/words'
-import { Cell, CELL_STATE, GAME_STATE } from './util'
+import { Cell, CELL_STATE, GAME_STATE, waitFor } from './util'
 import Grid from './components/Grid.vue'
 import Keyboard from './components/Keyboard.vue'
 
@@ -35,8 +35,9 @@ function showError(msg) {
   }, 1200)
 }
 
-function revealRow(matrixRow) {
+async function revealRow(matrixRow) {
   for (const c of matrixRow) {
+    await waitFor(250)
     c.reveal = true
   }
 }

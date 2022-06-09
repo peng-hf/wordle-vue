@@ -32,3 +32,7 @@ export function getCellBgColor(state) {
   if (state === CELL_STATE.ABSENT) return 'bg-dark-600'
   return ''
 }
+
+export function waitFor(ms = 0) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}

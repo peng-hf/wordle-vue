@@ -17,10 +17,8 @@ defineProps({
 })
 
 function getCellColorClasses(cell) {
-  const classes =
-    'border-width-2 border-solid border-dark-100 text-black dark:(text-white)' // CELL_STATE.EMPTY
   if (cell.reveal) return `${getCellBgColor(cell.state)} text-white`
-  return classes
+  return 'border-width-2 border-solid border-dark-100 text-black dark:(text-white)' // CELL_STATE.EMPTY
 }
 </script>
 
@@ -32,7 +30,7 @@ function getCellColorClasses(cell) {
         :key="columnIdx"
         :class="[
           'h-62px w-62px flex justify-center items-center rounded-sm text-30px uppercase font-bold ',
-          'transition duration-150 ease-linear',
+          `transition duration-150 ease-linear`,
           getCellColorClasses(cell)
         ]"
       >
