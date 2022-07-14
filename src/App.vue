@@ -11,12 +11,11 @@ const darkMode = ref(false)
 const word = 'hello'
 const currentRowIdx = ref(0)
 const matrix = ref(
-  Array.from({ length: 6 }, () =>
-    Array.from({ length: MAX_ATTEMPTS }, () => new Cell())
-  )
+  Array.from({ length: 6 }, () => Array.from({ length: MAX_ATTEMPTS }, () => new Cell()))
 )
 const errors = ref([])
 const gameState = ref(GAME_STATE.PLAYING)
+const revealingRow = ref(false)
 
 const currentAnswer = computed(() => {
   return matrix.value[currentRowIdx.value].map(c => c.letter).join('')
@@ -27,22 +26,34 @@ function toggleDarkMode() {
   document.body.classList.toggle('dark')
 }
 
-function showError(msg) {
+async function showError(msg, matrixRow) {
   const id = new Date().valueOf()
   errors.value.push({ msg, id })
   setTimeout(() => {
     errors.value = errors.value.filter(e => e.id !== id)
   }, 1200)
+
+  if (!matrixRow) return
+
+  for (const c of matrixRow) {
+    c.shake = true
+    setTimeout(() => {
+      c.shake = false
+    }, 400)
+  }
 }
 
 async function revealRow(matrixRow) {
+  revealingRow.value = true
   for (const c of matrixRow) {
     await waitFor(250)
     c.reveal = true
   }
+  revealingRow.value = false
 }
 
 function onPressKey(key) {
+  if (revealingRow.value) return
   const currentRow = matrix.value[currentRowIdx.value]
   if (key === 'Backspace') {
     let targetCell = null // Find cell to clear
@@ -64,7 +75,7 @@ function onPressKey(key) {
     } else if (currentAnswer.value.length < word.length) {
       showError('Not enough letter')
     } else if (!allWords.includes(currentAnswer.value)) {
-      showError('Not in the word list')
+      showError('Not in the word list', currentRow)
     } else {
       currentRowIdx.value++
       revealRow(currentRow)
@@ -89,9 +100,7 @@ function onPressKey(key) {
 </script>
 
 <template>
-  <div
-    class="relative h-screen w-screen flex flex-col bg-light-600 dark:bg-dark-900"
-  >
+  <div class="relative h-screen w-screen flex flex-col bg-light-600 dark:bg-dark-900">
     <div class="absolute w-full flex flex-col pt-1/6">
       <div
         v-for="(error, idx) in errors"
@@ -117,12 +126,7 @@ function onPressKey(key) {
 
     <div class="flex flex-col flex-1 items-center justify-between">
       <div class="flex flex-1 items-center">
-        <grid
-          class="my-30px"
-          :matrix="matrix"
-          :current-row-idx="currentRowIdx"
-          :word="word"
-        />
+        <grid class="my-30px" :matrix="matrix" :current-row-idx="currentRowIdx" :word="word" />
       </div>
       <keyboard class="my-20px" :matrix="matrix" @press-key="onPressKey" />
     </div>

@@ -18,7 +18,10 @@ defineProps({
 
 function getCellColorClasses(cell) {
   if (cell.reveal) return `${getCellBgColor(cell.state)} text-white`
-  return 'border-width-2 border-solid border-dark-100 text-black dark:(text-white)' // CELL_STATE.EMPTY
+
+  let styles = 'border-width-2 border-solid border-dark-100 text-black dark:(text-white)'
+  if (cell.shake) styles += ' animate-shake'
+  return styles
 }
 </script>
 
@@ -39,3 +42,27 @@ function getCellColorClasses(cell) {
     </template>
   </div>
 </template>
+
+
+<style scoped>
+.animate-shake {
+  animation: shake 0.3s infinite;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
+}
+</style>

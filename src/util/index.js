@@ -16,6 +16,7 @@ export class Cell {
     this.letter = ''
     this.state = CELL_STATE.EMPTY
     this.reveal = false
+    this.shake = false
   }
 
   clear() {
