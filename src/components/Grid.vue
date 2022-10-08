@@ -46,7 +46,7 @@ function getCellColorClasses(cell) {
 
 <style scoped>
 .animate-shake {
-  animation: shake 0.3s infinite;
+  animation: shake 0.4s infinite;
 }
 
 @keyframes shake {
@@ -57,12 +57,12 @@ function getCellColorClasses(cell) {
 
   20%,
   60% {
-    transform: translateX(-6px);
+    transform: translateX(-5px);
   }
 
   40%,
   80% {
-    transform: translateX(6px);
+    transform: translateX(5px);
   }
 }
 </style>

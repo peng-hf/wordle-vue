@@ -33,8 +33,6 @@ async function showError(msg, matrixRow) {
     errors.value = errors.value.filter(e => e.id !== id)
   }, 1200)
 
-  if (!matrixRow) return
-
   for (const c of matrixRow) {
     c.shake = true
     setTimeout(() => {
@@ -73,7 +71,7 @@ function onPressKey(key) {
       gameState.value = GAME_STATE.GAME_OVER
       revealRow(currentRow)
     } else if (currentAnswer.value.length < word.length) {
-      showError('Not enough letter')
+      showError('Not enough letter', currentRow)
     } else if (!allWords.includes(currentAnswer.value)) {
       showError('Not in the word list', currentRow)
     } else {
