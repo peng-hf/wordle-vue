@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { allWords } from './util/words'
 import { Cell, CELL_STATE, GAME_STATE, waitFor } from './util'
 import Grid from './components/Grid.vue'
@@ -7,7 +7,7 @@ import Keyboard from './components/Keyboard.vue'
 
 const MAX_ATTEMPTS = 5
 
-const darkMode = ref(false)
+const darkMode = ref(true)
 const word = 'hello'
 const currentRowIdx = ref(0)
 const matrix = ref(
@@ -15,16 +15,16 @@ const matrix = ref(
 )
 const errors = ref([])
 const gameState = ref(GAME_STATE.PLAYING)
-const revealingRow = ref(false)
+const isRowRevealed = ref(false)
 
 const currentAnswer = computed(() => {
   return matrix.value[currentRowIdx.value].map(c => c.letter).join('')
 })
 
-function toggleDarkMode() {
-  darkMode.value = !darkMode.value
-  document.body.classList.toggle('dark')
-}
+watch(darkMode, bool => {
+  if (bool) document.body.classList.add('dark')
+  else document.body.classList.remove('dark')
+}, { immediate: true })
 
 async function showError(msg, matrixRow) {
   const id = new Date().valueOf()
@@ -42,16 +42,16 @@ async function showError(msg, matrixRow) {
 }
 
 async function revealRow(matrixRow) {
-  revealingRow.value = true
+  isRowRevealed.value = true
   for (const c of matrixRow) {
     await waitFor(250)
     c.reveal = true
   }
-  revealingRow.value = false
+  isRowRevealed.value = false
 }
 
 function onPressKey(key) {
-  if (revealingRow.value) return
+  if (isRowRevealed.value) return
   const currentRow = matrix.value[currentRowIdx.value]
   if (key === 'Backspace') {
     let targetCell = null // Find cell to clear
@@ -118,7 +118,7 @@ function onPressKey(key) {
       <i
         :class="`w-50px p-2 text-center cursor-pointer 
         eva eva-${darkMode ? 'sun-outline' : 'moon-outline'}`"
-        @click="toggleDarkMode"
+        @click="darkMode = !darkMode"
       />
     </div>
 

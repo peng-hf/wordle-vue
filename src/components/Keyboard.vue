@@ -31,13 +31,13 @@ function handleKey(evt) {
 function getKeyColorClasses(key) {
   for (let i = props.matrix.length - 1; i >= 0; i--) {
     const row = props.matrix[i]
-    const revealRow = row.every(c => c.reveal)
+    const isRowRevealed = row.every(c => c.reveal)
     const foundCell = row.find(c => c.letter === key)
-    if (revealRow && foundCell?.reveal) {
+    if (isRowRevealed && foundCell?.reveal) {
       return `${getCellBgColor(foundCell.state)} text-white`
     }
   }
-  return 'bg-light-800 dark:(bg-dark-50 text-white)'
+  return 'bg-light-800 dark:(bg-dark-50 text-white) hover:opacity-70 active:opacity-40'
 }
 </script>
 
@@ -48,12 +48,12 @@ function getKeyColorClasses(key) {
         v-for="key in keys[rowIdx]"
         :key="key"
         :class="[
-          'h-60px w-40px m-3px flex justify-center items-center gap-3px uppercase rounded-sm font-bold text-lg',
+          'h-60px w-40px m-3px flex justify-center items-center gap-3px uppercase rounded-sm font-bold text-lg cursor-pointer',
           { '!w-80px !text-sm': key === 'Enter' },
           { '!w-80px !text-3xl': key === 'Backspace' },
           getKeyColorClasses(key)
         ]"
-        @click="handleKey(row, key)"
+        @click="handleKey(key)"
       >
         <i v-if="key === 'Backspace'" class="eva eva-backspace-outline" />
         <template v-else>{{ key }}</template>
