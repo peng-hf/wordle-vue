@@ -19,8 +19,10 @@ defineProps({
 function getCellColorClasses(cell) {
   if (cell.reveal) return `${getCellBgColor(cell.state)} text-white`
 
-  let styles = 'border-width-2 border-solid border-dark-100 text-black dark:(text-white)'
+  let styles = 'border-width-2 border-solid text-black dark:(text-white)'
+  styles += cell.letter ? ' border-dark-50' : ' border-dark-300'
   if (cell.shake) styles += ' animate-shake'
+
   return styles
 }
 </script>
