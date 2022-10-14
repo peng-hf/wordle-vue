@@ -21,10 +21,14 @@ const currentAnswer = computed(() => {
   return matrix.value[currentRowIdx.value].map(c => c.letter).join('')
 })
 
-watch(darkMode, bool => {
-  if (bool) document.body.classList.add('dark')
-  else document.body.classList.remove('dark')
-}, { immediate: true })
+watch(
+  darkMode,
+  bool => {
+    if (bool) document.body.classList.add('dark')
+    else document.body.classList.remove('dark')
+  },
+  { immediate: true }
+)
 
 async function showError(msg, matrixRow) {
   const id = new Date().valueOf()
@@ -103,7 +107,7 @@ function onPressKey(key) {
       <div
         v-for="(error, idx) in errors"
         :key="idx"
-        class="self-center py-10px px-20px rounded-sm font-bold mt-10px bg-dark-400 text-white dark:(bg-light-400 text-black)"
+        class="self-center py-10px px-20px rounded-sm font-bold mt-10px bg-dark-400 text-white dark:(bg-light-400 text-black) z-1"
       >
         {{ error.msg }}
       </div>

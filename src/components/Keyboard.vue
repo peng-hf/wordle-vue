@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { getCellBgColor } from '@/util'
+import { getCellBgRevealedColor } from '@/util'
 
 const props = defineProps({
   matrix: {
@@ -11,7 +11,7 @@ const props = defineProps({
 
 const emit = defineEmits(['pressKey'])
 
-document.addEventListener('keydown', handleKey)
+document.addEventListener('keydown', pressKey)
 
 const KEYS = [
   [...'qwertyuiop'.split('')],
@@ -23,7 +23,7 @@ const keys = ref(KEYS)
 
 const ALLOWED_KEYS = KEYS.reduce((acc, row) => acc.concat(row), [])
 
-function handleKey(evt) {
+function pressKey(evt) {
   const key = evt instanceof KeyboardEvent ? evt.key : evt
   if (ALLOWED_KEYS.includes(key)) emit('pressKey', key)
 }
@@ -34,7 +34,7 @@ function getKeyColorClasses(key) {
     const isRowRevealed = row.every(c => c.reveal)
     const foundCell = row.find(c => c.letter === key)
     if (isRowRevealed && foundCell?.reveal) {
-      return `${getCellBgColor(foundCell.state)} text-white`
+      return `${getCellBgRevealedColor(foundCell.state)} text-white`
     }
   }
   return 'bg-light-800 dark:(bg-dark-50 text-white) hover:opacity-70 active:opacity-40'
@@ -53,7 +53,7 @@ function getKeyColorClasses(key) {
           { '!w-80px !text-3xl': key === 'Backspace' },
           getKeyColorClasses(key)
         ]"
-        @click="handleKey(key)"
+        @click="pressKey(key)"
       >
         <i v-if="key === 'Backspace'" class="eva eva-backspace-outline" />
         <template v-else>{{ key }}</template>
