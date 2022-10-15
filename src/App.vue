@@ -7,7 +7,7 @@ import Keyboard from './components/Keyboard.vue'
 
 const MAX_ATTEMPTS = 5
 
-const darkMode = ref(true)
+const darkMode = ref(false)
 const word = 'hello'
 const currentRowIdx = ref(0)
 const matrix = ref(
