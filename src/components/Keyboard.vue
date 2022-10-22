@@ -31,9 +31,8 @@ function pressKey(evt) {
 function getKeyColorClasses(key) {
   for (let i = props.matrix.length - 1; i >= 0; i--) {
     const row = props.matrix[i]
-    const isRowRevealed = row.every(c => c.reveal)
     const foundCell = row.find(c => c.letter === key)
-    if (isRowRevealed && foundCell?.reveal) {
+    if (foundCell?.reveal) {
       return `${getCellBgRevealedColor(foundCell.state)} text-white`
     }
   }

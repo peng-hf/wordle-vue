@@ -14,5 +14,12 @@ module.exports = {
     // 'vue/no-unused-vars': 'error'
     'vue/script-setup-uses-vars': 'error',
     'vue/multi-word-component-names': 'off'
+  },
+  globals: {
+    $ref: 'readonly',
+    $computed: 'readonly',
+    $shallowRef: 'readonly',
+    $customRef: 'readonly',
+    $toRef: 'readonly'
   }
 }

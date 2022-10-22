@@ -1,28 +1,24 @@
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { reactive, watch } from 'vue'
 import { allWords } from './util/words'
-import { Cell, CELL_STATE, GAME_STATE, waitFor } from './util'
+import { CELL_STATE, GAME_STATE, MAX_ATTEMPTS, waitFor, loadGame, saveGame } from './util'
 import Grid from './components/Grid.vue'
 import Keyboard from './components/Keyboard.vue'
-
-const MAX_ATTEMPTS = 5
-
-const darkMode = ref(false)
 const word = 'hello'
-const currentRowIdx = ref(0)
-const matrix = ref(
-  Array.from({ length: 6 }, () => Array.from({ length: MAX_ATTEMPTS }, () => new Cell()))
-)
-const errors = ref([])
-const gameState = ref(GAME_STATE.PLAYING)
-const isRowRevealed = ref(false)
 
-const currentAnswer = computed(() => {
-  return matrix.value[currentRowIdx.value].map(c => c.letter).join('')
+const game = reactive(loadGame())
+let errors = $ref([])
+
+const currentAnswer = $computed(() => {
+  return game.matrix[game.currentRowIdx].map(c => c.letter).join('')
+})
+
+const currentRow = $computed(() => {
+  return game.matrix[game.currentRowIdx]
 })
 
 watch(
-  darkMode,
+  () => game.darkMode,
   bool => {
     if (bool) document.body.classList.add('dark')
     else document.body.classList.remove('dark')
@@ -32,9 +28,9 @@ watch(
 
 async function showError(msg, matrixRow) {
   const id = new Date().valueOf()
-  errors.value.push({ msg, id })
+  errors.push({ msg, id })
   setTimeout(() => {
-    errors.value = errors.value.filter(e => e.id !== id)
+    errors = errors.filter(e => e.id !== id)
   }, 1200)
 
   for (const c of matrixRow) {
@@ -46,18 +42,15 @@ async function showError(msg, matrixRow) {
 }
 
 async function revealRow(matrixRow) {
-  isRowRevealed.value = true
   for (const c of matrixRow) {
     await waitFor(250)
     c.reveal = true
   }
-  isRowRevealed.value = false
 }
 
-function onPressKey(key) {
-  if (isRowRevealed.value) return
-  const currentRow = matrix.value[currentRowIdx.value]
-  if (key === 'Backspace') {
+async function onPressKey(key) {
+  key = key.toLowerCase()
+  if (key === 'backspace') {
     let targetCell = null // Find cell to clear
     for (let i = currentRow.length - 1; i >= 0; --i) {
       const cell = currentRow[i]
@@ -66,21 +59,23 @@ function onPressKey(key) {
         break
       }
     }
-    if (targetCell) targetCell.clear()
-  } else if (key === 'Enter') {
-    if (currentAnswer.value === word) {
-      gameState.value = GAME_STATE.WIN
+    if (targetCell) {
+      targetCell.clear()
+    }
+  } else if (key === 'enter') {
+    if (currentAnswer === word) {
+      game.state = GAME_STATE.WIN
       revealRow(currentRow)
-    } else if (currentRowIdx.value === MAX_ATTEMPTS) {
-      gameState.value = GAME_STATE.GAME_OVER
+    } else if (game.currentRowIdx === MAX_ATTEMPTS) {
+      game.state = GAME_STATE.GAME_OVER
       revealRow(currentRow)
-    } else if (currentAnswer.value.length < word.length) {
+    } else if (currentAnswer.length < word.length) {
       showError('Not enough letter', currentRow)
-    } else if (!allWords.includes(currentAnswer.value)) {
+    } else if (!allWords.includes(currentAnswer)) {
       showError('Not in the word list', currentRow)
     } else {
-      currentRowIdx.value++
-      revealRow(currentRow)
+      await revealRow(currentRow)
+      game.currentRowIdx++
     }
   } else {
     // Type a new letter
@@ -98,6 +93,8 @@ function onPressKey(key) {
       else nextEmptyCell.state = CELL_STATE.ABSENT
     }
   }
+
+  saveGame(game)
 }
 </script>
 
@@ -121,16 +118,21 @@ function onPressKey(key) {
       <div>Wordle For Fun</div>
       <i
         :class="`w-50px p-2 text-center cursor-pointer 
-        eva eva-${darkMode ? 'sun-outline' : 'moon-outline'}`"
-        @click="darkMode = !darkMode"
+        eva eva-${game.darkMode ? 'sun-outline' : 'moon-outline'}`"
+        @click="game.darkMode = !game.darkMode"
       />
     </div>
 
     <div class="flex flex-col flex-1 items-center justify-between">
       <div class="flex flex-1 items-center">
-        <grid class="my-30px" :matrix="matrix" :current-row-idx="currentRowIdx" :word="word" />
+        <grid
+          class="my-30px"
+          :matrix="game.matrix"
+          :current-row-idx="game.currentRowIdx"
+          :word="word"
+        />
       </div>
-      <keyboard class="my-20px" :matrix="matrix" @press-key="onPressKey" />
+      <keyboard class="my-20px" :matrix="game.matrix" @press-key="onPressKey" />
     </div>
   </div>
 </template>

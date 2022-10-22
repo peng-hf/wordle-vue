@@ -14,7 +14,7 @@ defineProps({
     <!-- Front face -->
     <div
       :class="[
-        'face',
+        'face dark:(text-white)',
         'border-width-2 border-solid transform transition-transform duration-600',
         cell.letter ? 'border-dark-50 animate-zoom' : 'border-light-900 dark:(border-dark-300)',
         { 'rotate-x-180': cell.reveal }
@@ -26,7 +26,7 @@ defineProps({
     <!-- Back face -->
     <div
       :class="[
-        'face',
+        'face text-white',
         'transform rotate-180 rotate-y-180 transform transition-transform duration-600',
         { 'rotate-x-180': cell.reveal },
         getCellBgRevealedColor(cell.state)
@@ -39,7 +39,7 @@ defineProps({
 
 <style scoped>
 .face {
-  @apply absolute top-0 h-full w-full flex justify-center items-center backface-hidden rounded-sm text-30px uppercase font-bold dark:(text-white);
+  @apply absolute top-0 h-full w-full flex justify-center items-center backface-hidden rounded-sm text-30px uppercase font-bold;
 }
 .animate-shake {
   animation: shake 0.3s infinite;
