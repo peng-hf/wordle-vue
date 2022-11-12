@@ -4,8 +4,10 @@ import { allWords } from './util/words'
 import { CELL_STATE, GAME_STATE, MAX_ATTEMPTS, waitFor, loadGame, saveGame } from './util'
 import Grid from './components/Grid.vue'
 import Keyboard from './components/Keyboard.vue'
-const word = 'hello'
+import ErrorMessages from './components/ErrorMessages.vue'
+// import Modal from './components/Modal.vue'
 
+const word = 'hello'
 const game = reactive(loadGame())
 let errors = $ref([])
 
@@ -17,11 +19,16 @@ const currentRow = $computed(() => {
   return game.matrix[game.currentRowIdx]
 })
 
+const isRowRevealing = $computed(() => {
+  return currentRow.some(cell => cell.reveal)
+})
+
 watch(
   () => game.darkMode,
   bool => {
     if (bool) document.body.classList.add('dark')
     else document.body.classList.remove('dark')
+    // saveGame(game)
   },
   { immediate: true }
 )
@@ -41,14 +48,15 @@ async function showError(msg, matrixRow) {
   }
 }
 
-async function revealRow(matrixRow) {
-  for (const c of matrixRow) {
+async function revealRow(row) {
+  for (const c of row) {
     await waitFor(250)
     c.reveal = true
   }
 }
 
 async function onPressKey(key) {
+  if (isRowRevealing) return
   key = key.toLowerCase()
   if (key === 'backspace') {
     let targetCell = null // Find cell to clear
@@ -64,11 +72,11 @@ async function onPressKey(key) {
     }
   } else if (key === 'enter') {
     if (currentAnswer === word) {
+      await revealRow(currentRow)
       game.state = GAME_STATE.WIN
-      revealRow(currentRow)
     } else if (game.currentRowIdx === MAX_ATTEMPTS) {
+      await revealRow(currentRow)
       game.state = GAME_STATE.GAME_OVER
-      revealRow(currentRow)
     } else if (currentAnswer.length < word.length) {
       showError('Not enough letter', currentRow)
     } else if (!allWords.includes(currentAnswer)) {
@@ -100,15 +108,11 @@ async function onPressKey(key) {
 
 <template>
   <div class="relative h-screen w-screen flex flex-col bg-light-600 dark:bg-dark-900">
-    <div class="absolute w-full flex flex-col pt-1/6">
-      <div
-        v-for="(error, idx) in errors"
-        :key="idx"
-        class="self-center py-10px px-20px rounded-sm font-bold mt-10px bg-dark-400 text-white dark:(bg-light-400 text-black) z-1"
-      >
-        {{ error.msg }}
-      </div>
-    </div>
+    <!-- Error messages -->
+    <error-messages :errors="errors" />
+
+    <!-- Modal
+    <modal /> -->
 
     <!-- Header -->
     <div
