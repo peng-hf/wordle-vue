@@ -1,12 +1,10 @@
 <script setup>
-const props = defineProps({
+defineProps({
   errors: {
     type: Array,
     default: () => []
   }
 })
-
-console.log(props.errors)
 </script>
 
 

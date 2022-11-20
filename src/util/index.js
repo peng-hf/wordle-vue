@@ -13,7 +13,10 @@ export const GAME_STATE = {
   WIN: 'win'
 }
 
-export const STORAGE_KEY = '__wordle_vue_storage__'
+export const STORAGE_KEY = {
+  GAME: '__wordle_game_storage__',
+  SETTINGS: '__wordle__settings_storage__'
+}
 
 export const MAX_ATTEMPTS = 5
 
@@ -32,6 +35,13 @@ export class Cell {
   }
 }
 
+const getNewGame = () => ({
+  matrix: Array.from({ length: 6 }, () => Array.from({ length: MAX_ATTEMPTS }, () => new Cell())),
+  state: GAME_STATE.PLAYING,
+  currentRowIdx: 0,
+  darkMode: false
+})
+
 // Helper functions
 export function getCellBgRevealedColor(state) {
   if (state === CELL_STATE.CORRECT) return 'bg-lime-600'
@@ -48,8 +58,6 @@ export function waitFor(ms = 0) {
 export function setStorage(key, value, ttl) {
   const now = new Date()
   const item = { value, expiry: now.getTime() + ttl }
-
-  console.log()
   localStorage.setItem(key, JSON.stringify(item))
 }
 
@@ -66,7 +74,7 @@ export function getStorage(key) {
 }
 
 export function loadGame() {
-  const game = getStorage(STORAGE_KEY)
+  const game = getStorage(STORAGE_KEY.GAME)
   if (game) {
     // Restore cell class in the matrix because of json stringifcation
     game.matrix.forEach(row => {
@@ -77,19 +85,30 @@ export function loadGame() {
     })
     return game
   }
-  return {
-    matrix: Array.from({ length: 6 }, () => Array.from({ length: MAX_ATTEMPTS }, () => new Cell())),
-    state: GAME_STATE.PLAYING,
-    currentRowIdx: 0,
-    darkMode: false
-  }
+  return getNewGame()
 }
 
 export function saveGame(game) {
   const EXPIRATION_MS = 60000 * 60 // 1 hour
-  setStorage(STORAGE_KEY, game, EXPIRATION_MS)
+  setStorage(STORAGE_KEY.GAME, game, EXPIRATION_MS)
 }
 
-export function resetGame() {
-  localStorage.removeItem(STORAGE_KEY)
+export function resetGame(game) {
+  localStorage.removeItem(STORAGE_KEY.GAME)
+
+  const newGame = getNewGame()
+  for (const key in game) {
+    game[key] = newGame[key]
+  }
+}
+
+export function loadSettings() {
+  const settings = getStorage(STORAGE_KEY.SETTINGS)
+  if (settings) return settings
+  return { darkMode: false }
+}
+
+export function saveSettings(settings) {
+  const EXPIRATION_MS = 60000 * 60 * 24 * 30 // 30 days
+  setStorage(STORAGE_KEY.SETTINGS, settings, EXPIRATION_MS)
 }

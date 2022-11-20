@@ -1,7 +1,17 @@
 <script setup>
 import { reactive, watch } from 'vue'
 import { allWords } from './util/words'
-import { CELL_STATE, GAME_STATE, MAX_ATTEMPTS, waitFor, loadGame, saveGame } from './util'
+import {
+  CELL_STATE,
+  GAME_STATE,
+  MAX_ATTEMPTS,
+  waitFor,
+  loadGame,
+  saveGame,
+  loadSettings,
+  saveSettings,
+  resetGame
+} from './util'
 import Grid from './components/Grid.vue'
 import Keyboard from './components/Keyboard.vue'
 import ErrorMessages from './components/ErrorMessages.vue'
@@ -9,6 +19,7 @@ import ErrorMessages from './components/ErrorMessages.vue'
 
 const word = 'hello'
 const game = reactive(loadGame())
+const settings = reactive(loadSettings())
 let errors = $ref([])
 
 const currentAnswer = $computed(() => {
@@ -23,14 +34,47 @@ const isRowRevealing = $computed(() => {
   return currentRow.some(cell => cell.reveal)
 })
 
+// debug
+window.reset = () => {
+  resetGame(game)
+}
+
 watch(
-  () => game.darkMode,
+  () => settings.darkMode,
   bool => {
     if (bool) document.body.classList.add('dark')
     else document.body.classList.remove('dark')
-    // saveGame(game)
+    saveSettings(settings)
   },
   { immediate: true }
+)
+
+watch(
+  () => game.state,
+  state => {
+    if (state === GAME_STATE.WIN) {
+      console.log('you won!')
+      resetGame(game)
+    }
+
+    if (state === GAME_STATE.GAME_OVER) {
+      console.log('you lost!')
+      resetGame(game)
+    }
+
+    if (state === GAME_STATE.PLAYING) {
+      console.log('playing!! good luck :)')
+    }
+  },
+  { immediate: true }
+)
+
+watch(
+  () => game.matrix,
+  matrix => {
+    saveGame(game)
+  },
+  { immediate: true, deep: true }
 )
 
 async function showError(msg, matrixRow) {
@@ -53,6 +97,8 @@ async function revealRow(row) {
     await waitFor(250)
     c.reveal = true
   }
+
+  await waitFor(800) // Wait for animation to commplete on the last cell
 }
 
 async function onPressKey(key) {
@@ -88,10 +134,12 @@ async function onPressKey(key) {
   } else {
     // Type a new letter
     let nextEmptyCellIdx
+
+    // Find last empty cell and get its index
     const nextEmptyCell = currentRow.find((cell, idx) => {
       nextEmptyCellIdx = idx
       return cell.state === CELL_STATE.EMPTY
-    }) // Find last empty cell and get its index
+    })
 
     if (nextEmptyCell) {
       nextEmptyCell.letter = key
@@ -101,8 +149,6 @@ async function onPressKey(key) {
       else nextEmptyCell.state = CELL_STATE.ABSENT
     }
   }
-
-  saveGame(game)
 }
 </script>
 
@@ -122,8 +168,8 @@ async function onPressKey(key) {
       <div>Wordle For Fun</div>
       <i
         :class="`w-50px p-2 text-center cursor-pointer 
-        eva eva-${game.darkMode ? 'sun-outline' : 'moon-outline'}`"
-        @click="game.darkMode = !game.darkMode"
+        eva eva-${settings.darkMode ? 'sun-outline' : 'moon-outline'}`"
+        @click="settings.darkMode = !settings.darkMode"
       />
     </div>
 
