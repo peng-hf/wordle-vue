@@ -50,31 +50,34 @@ watch(
 )
 
 watch(
-  () => game.state,
-  state => {
+  () => [game.state, game.currentRowIdx],
+  ([state, rowIdx]) => {
+    console.log(state)
+    if (game.currentRowIdx !== rowIdx) {
+      saveGame(game)
+    }
+
     if (state === GAME_STATE.WIN) {
       console.log('you won!')
       resetGame(game)
     }
 
     if (state === GAME_STATE.GAME_OVER) {
-      console.log('you lost!')
       resetGame(game)
     }
 
     if (state === GAME_STATE.PLAYING) {
-      console.log('playing!! good luck :)')
+      saveGame(game)
     }
   },
   { immediate: true }
 )
 
 watch(
-  () => game.matrix,
-  matrix => {
+  () => game.currentRowIdx,
+  rowIdx => {
     saveGame(game)
-  },
-  { immediate: true, deep: true }
+  }
 )
 
 async function showError(msg, matrixRow) {
