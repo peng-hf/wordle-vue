@@ -38,8 +38,7 @@ export class Cell {
 const getNewGame = () => ({
   matrix: Array.from({ length: 6 }, () => Array.from({ length: MAX_ATTEMPTS }, () => new Cell())),
   state: GAME_STATE.PLAYING,
-  currentRowIdx: 0,
-  darkMode: false
+  currentRowIdx: 0
 })
 
 // Helper functions

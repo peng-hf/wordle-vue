@@ -9,7 +9,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['pressKey'])
+const emit = defineEmits(['pressKey', 'restart'])
 
 document.addEventListener('keydown', pressKey)
 
@@ -26,6 +26,7 @@ const ALLOWED_KEYS = KEYS.reduce((acc, row) => acc.concat(row), [])
 function pressKey(evt) {
   const key = evt instanceof KeyboardEvent ? evt.key : evt
   if (ALLOWED_KEYS.includes(key)) emit('pressKey', key)
+  if (evt.shiftKey && key === 'R') emit('restart')
 }
 
 function getKeyColorClasses(key) {

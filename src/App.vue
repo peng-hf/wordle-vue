@@ -14,13 +14,12 @@ import {
 } from './util'
 import Grid from './components/Grid.vue'
 import Keyboard from './components/Keyboard.vue'
-import ErrorMessages from './components/ErrorMessages.vue'
-// import Modal from './components/Modal.vue'
+import Messages from './components/Messages.vue'
 
 const word = 'hello'
 const game = reactive(loadGame())
 const settings = reactive(loadSettings())
-let errors = $ref([])
+let messages = $ref([])
 
 const currentAnswer = $computed(() => {
   return game.matrix[game.currentRowIdx].map(c => c.letter).join('')
@@ -33,11 +32,6 @@ const currentRow = $computed(() => {
 const isRowRevealing = $computed(() => {
   return currentRow.some(cell => cell.reveal)
 })
-
-// debug
-window.reset = () => {
-  resetGame(game)
-}
 
 watch(
   () => settings.darkMode,
@@ -52,47 +46,43 @@ watch(
 watch(
   () => [game.state, game.currentRowIdx],
   ([state, rowIdx]) => {
-    console.log(state)
-    if (game.currentRowIdx !== rowIdx) {
-      saveGame(game)
-    }
-
     if (state === GAME_STATE.WIN) {
-      console.log('you won!')
-      resetGame(game)
+      showMessage(
+        '<b>You guessed the right word!</b><br>Press <b>Shift + R</b> to restart the game.'
+      )
     }
-
     if (state === GAME_STATE.GAME_OVER) {
-      resetGame(game)
+      showMessage(
+        `Game over. The answer is <b>${word.toUpperCase()}</b>.<br>Press <b>Shift + R</b> to restart the game.`
+      )
     }
 
-    if (state === GAME_STATE.PLAYING) {
-      saveGame(game)
-    }
+    saveGame(game)
   },
   { immediate: true }
 )
 
-watch(
-  () => game.currentRowIdx,
-  rowIdx => {
-    saveGame(game)
-  }
-)
-
-async function showError(msg, matrixRow) {
-  const id = new Date().valueOf()
-  errors.push({ msg, id })
-  setTimeout(() => {
-    errors = errors.filter(e => e.id !== id)
-  }, 1200)
-
-  for (const c of matrixRow) {
-    c.shake = true
+async function showMessage(text, { error = false } = {}) {
+  if (error) {
+    const id = new Date().valueOf()
+    messages.push({ text, id })
     setTimeout(() => {
-      c.shake = false
-    }, 400)
+      messages = messages.filter(e => e.id !== id)
+    }, 1200)
+
+    for (const c of currentRow) {
+      c.shake = true
+      setTimeout(() => {
+        c.shake = false
+      }, 400)
+    }
+  } else {
+    messages.push({ text })
   }
+}
+
+function clearMessages() {
+  messages.splice(0, messages.length)
 }
 
 async function revealRow(row) {
@@ -100,8 +90,12 @@ async function revealRow(row) {
     await waitFor(250)
     c.reveal = true
   }
+  await waitFor(800) // Wait for animation to complete on the last cell
+}
 
-  await waitFor(800) // Wait for animation to commplete on the last cell
+function restartGame() {
+  resetGame(game)
+  clearMessages()
 }
 
 async function onPressKey(key) {
@@ -127,9 +121,9 @@ async function onPressKey(key) {
       await revealRow(currentRow)
       game.state = GAME_STATE.GAME_OVER
     } else if (currentAnswer.length < word.length) {
-      showError('Not enough letter', currentRow)
+      showMessage('<b>Not enough letter</b>', { error: true })
     } else if (!allWords.includes(currentAnswer)) {
-      showError('Not in the word list', currentRow)
+      showMessage('<b>Not in the word list</b>', { error: true })
     } else {
       await revealRow(currentRow)
       game.currentRowIdx++
@@ -158,10 +152,7 @@ async function onPressKey(key) {
 <template>
   <div class="relative h-screen w-screen flex flex-col bg-light-600 dark:bg-dark-900">
     <!-- Error messages -->
-    <error-messages :errors="errors" />
-
-    <!-- Modal
-    <modal /> -->
+    <messages :messages="messages" />
 
     <!-- Header -->
     <div
@@ -185,7 +176,12 @@ async function onPressKey(key) {
           :word="word"
         />
       </div>
-      <keyboard class="my-20px" :matrix="game.matrix" @press-key="onPressKey" />
+      <keyboard
+        class="my-20px"
+        :matrix="game.matrix"
+        @press-key="onPressKey"
+        @restart="restartGame"
+      />
     </div>
   </div>
 </template>
