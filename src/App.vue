@@ -158,10 +158,16 @@ async function onPressKey(key) {
     <div
       class="h-60px flex justify-between items-center bg-light-700 text-3xl font-semi-bold dark:(bg-dark-400 text-white)"
     >
-      <div class="w-50px text-center" />
-      <div>Wordle For Fun</div>
+      <div class="w-50px text-center">
+        <a
+          class="p-2 eva eva-github cursor-pointer hover:(opacity-70)"
+          href="https://github.com/peng-hf/wordle-vue"
+          target="_blank"
+        />
+      </div>
+      <div>Wordle<sub class="text-xs pl-1">Clone</sub></div>
       <i
-        :class="`w-50px p-2 text-center cursor-pointer 
+        :class="`w-50px p-2 text-center cursor-pointer hover:(opacity-70) 
         eva eva-${settings.darkMode ? 'sun-outline' : 'moon-outline'}`"
         @click="settings.darkMode = !settings.darkMode"
       />
