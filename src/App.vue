@@ -93,8 +93,12 @@ async function revealRow(row) {
   await waitFor(800) // Wait for animation to complete on the last cell
 }
 
-function restartGame() {
+async function restartGame() {
   resetGame(game)
+  clearMessages()
+
+  showMessage('<b>Game restarted</b>')
+  await waitFor(800)
   clearMessages()
 }
 

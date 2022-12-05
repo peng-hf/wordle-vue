@@ -37,7 +37,6 @@ export default {
 
     document.addEventListener('keyup', evt => {
       const keyElt = mapKeyToElt[evt.key]
-      console.log(keyElt)
       if (keyElt) keyElt.classList.remove('opacity-70')
     })
   },
