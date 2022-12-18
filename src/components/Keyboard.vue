@@ -66,9 +66,10 @@ export default {
         :id="`key-${key}`"
         :key="key"
         :class="[
-          'h-60px w-40px m-3px flex justify-center items-center gap-3px uppercase rounded-sm font-bold text-lg cursor-pointer',
-          { '!w-80px !text-sm': key === 'Enter' },
-          { '!w-80px !text-3xl': key === 'Backspace' },
+          'sm:(h-60px w-40px text-lg) m-3px flex justify-center items-center gap-3px uppercase rounded-sm font-bold  cursor-pointer',
+          '<sm:(h-40px w-30px text-md)',
+          { 'sm:(!w-80px !text-sm) <sm:(!w-50px !text-xs) ': key === 'Enter' },
+          { 'sm:(!w-80px !text-3xl) <sm:(!w-50px !text-xl) ': key === 'Backspace' },
           getKeyColorClasses(key)
         ]"
         @click="onClickKey(key)"

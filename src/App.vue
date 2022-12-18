@@ -154,7 +154,9 @@ async function onPressKey(key) {
 </script>
 
 <template>
-  <div class="relative h-screen w-screen flex flex-col bg-light-600 dark:bg-dark-900">
+  <div
+    class="relative h-screen w-screen flex flex-col bg-light-600 dark:bg-dark-900 overflow-hidden"
+  >
     <!-- Error messages -->
     <messages :messages="messages" />
 
@@ -180,14 +182,14 @@ async function onPressKey(key) {
     <div class="flex flex-col flex-1 items-center justify-between">
       <div class="flex flex-1 items-center">
         <grid
-          class="my-30px"
+          class="sm:my-30px"
           :matrix="game.matrix"
           :current-row-idx="game.currentRowIdx"
           :word="word"
         />
       </div>
       <keyboard
-        class="my-20px"
+        class="sm:my-20px <sm:mb-20px"
         :matrix="game.matrix"
         @press-key="onPressKey"
         @restart="restartGame"
