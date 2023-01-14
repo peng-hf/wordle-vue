@@ -3,7 +3,7 @@ name: Deploy website via SCP
 on:
   push:
     branches:
-      - '*'
+      - 'master'
 
 
 jobs:
@@ -15,7 +15,7 @@ jobs:
         with:
             node-version: 16
 
-      - name: Yarn instal depedencies
+      - name: Yarn install dependencies
         uses: borales/actions-yarn@v4
         with:
             cmd: install
