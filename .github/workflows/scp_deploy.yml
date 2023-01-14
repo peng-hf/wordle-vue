@@ -10,16 +10,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-            node-version: '14'
+            node-version: 16
 
-      - name: Install npm depedencies
-        run: npm ci
-
-      - name: Build assets
-        run: npm run build
+      - name: Yarn instal depedencies
+        uses: borales/actions-yarn@v4
+        with:
+            cmd: install
+     
+      - name: Yarn build assets
+        uses: borales/actions-yarn@v4
+        with:
+            cmd: build
 
       - name: Copy files to server
         uses: appleboy/scp-action@master
