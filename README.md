@@ -1,7 +1,22 @@
-# Vue 3 + Vite
+# Wordle Vue
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Clone of the popular [Wordle](https://www.nytimes.com/games/wordle) game implemented with Vue 3 and Vite.
 
-## Recommended IDE Setup
+[Demo here](http://wordle-vue.lyfing.dev)
 
-- [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar)
+## Local setup
+
+```shell
+$ yarn install
+$ yarn dev
+```
+
+## Features
+- Random word
+- Animation
+  - Shake row on eror
+  - Stagger on row revealing
+  - Keyboard press feedback
+- Save game state in local storage
+- Mobile responsive
+- Light/Dark mode
