@@ -1,6 +1,6 @@
 <script setup>
 import { reactive, watch } from 'vue'
-import { allWords } from './util/words'
+import { allWords, getWordOfTheDay } from './util/words'
 import {
   CELL_STATE,
   GAME_STATE,
@@ -17,7 +17,7 @@ import Grid from './components/Grid.vue'
 import Keyboard from './components/Keyboard.vue'
 import Messages from './components/Messages.vue'
 
-const word = 'hello'
+const word = getWordOfTheDay()
 const game = reactive(loadGame())
 const settings = reactive(loadSettings())
 let messages = $ref([])
@@ -47,20 +47,23 @@ watch(
 watch(
   () => [game.state, game.currentRowIdx],
   ([state, rowIdx]) => {
+    const restartMsg = isMobileOrTablet()
+      ? 'Click <b>here</b> to restart the game.'
+      : 'Press <b>Shift + R</b> to restart the game.'
+
     if (state === GAME_STATE.WIN) {
-      const msg = isMobileOrTablet()
-        ? '<b>You guessed the right word!</b><br>Click <b>here</b> to restart the game.'
-        : '<b>You guessed the right word!</b><br>Press <b>Shift + R</b> to restart the game.'
-      showMessage(msg, {
+      showMessage(`<b>You guessed the right word!</b><br>${restartMsg}`, {
         cb: () => {
           restartGame()
         }
       })
     }
     if (state === GAME_STATE.GAME_OVER) {
-      showMessage(
-        `Game over. The answer is <b>${word.toUpperCase()}</b>.<br>Press <b>Shift + R</b> to restart the game.`
-      )
+      showMessage(`Game over. The answer is <b>${word.toUpperCase()}</b>.<br>${restartMsg}`, {
+        cb: () => {
+          restartGame()
+        }
+      })
     }
 
     saveGame(game)
