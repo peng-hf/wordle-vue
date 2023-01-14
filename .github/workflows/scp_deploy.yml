@@ -1,0 +1,37 @@
+name: Deploy website via SCP
+
+on:
+  push:
+    branches:
+      - '*'
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+            node-version: '14'
+
+      - name: Install npm depedencies
+        run: npm ci
+
+      - name: Build assets
+        run: npm run build
+
+      - name: Copy files to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          password: ${{ secrets.PASSWORD }}
+          source: 'dist/*'
+          target: ${{ secrets.REMOTE_DIR }}
+          strip_components: 1
+          rm: true
+
+
+
+
