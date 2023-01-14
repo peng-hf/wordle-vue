@@ -111,3 +111,7 @@ export function saveSettings(settings) {
   const EXPIRATION_MS = 60000 * 60 * 24 * 30 // 30 days
   setStorage(STORAGE_KEY.SETTINGS, settings, EXPIRATION_MS)
 }
+
+export function isMobileOrTablet() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+}

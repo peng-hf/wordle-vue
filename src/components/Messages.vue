@@ -14,6 +14,7 @@ defineProps({
       v-for="(msg, idx) in messages"
       :key="idx"
       class="py-12px px-20px rounded-md mt-10px bg-light-400 text-black text-center shadow-lg z-1"
+      @click="typeof msg.cb === 'function' ? msg.cb() : null"
     >
       <span v-html="msg.text" />
     </div>

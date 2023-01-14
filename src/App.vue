@@ -10,7 +10,8 @@ import {
   saveGame,
   loadSettings,
   saveSettings,
-  resetGame
+  resetGame,
+  isMobileOrTablet
 } from './util'
 import Grid from './components/Grid.vue'
 import Keyboard from './components/Keyboard.vue'
@@ -47,9 +48,14 @@ watch(
   () => [game.state, game.currentRowIdx],
   ([state, rowIdx]) => {
     if (state === GAME_STATE.WIN) {
-      showMessage(
-        '<b>You guessed the right word!</b><br>Press <b>Shift + R</b> to restart the game.'
-      )
+      const msg = isMobileOrTablet()
+        ? '<b>You guessed the right word!</b><br>Click <b>here</b> to restart the game.'
+        : '<b>You guessed the right word!</b><br>Press <b>Shift + R</b> to restart the game.'
+      showMessage(msg, {
+        cb: () => {
+          restartGame()
+        }
+      })
     }
     if (state === GAME_STATE.GAME_OVER) {
       showMessage(
@@ -62,10 +68,10 @@ watch(
   { immediate: true }
 )
 
-async function showMessage(text, { error = false } = {}) {
+async function showMessage(text, { error = false, cb = null } = {}) {
   if (error) {
     const id = new Date().valueOf()
-    messages.push({ text, id })
+    messages.push({ text, id, cb })
     setTimeout(() => {
       messages = messages.filter(e => e.id !== id)
     }, 1200)
@@ -77,7 +83,7 @@ async function showMessage(text, { error = false } = {}) {
       }, 400)
     }
   } else {
-    messages.push({ text })
+    messages.push({ text, cb })
   }
 }
 
