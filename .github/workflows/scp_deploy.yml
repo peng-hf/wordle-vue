@@ -1,0 +1,41 @@
+name: Deploy website via SCP
+
+on:
+  push:
+    branches:
+      - 'master'
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+            node-version: 16
+
+      - name: Yarn install dependencies
+        uses: borales/actions-yarn@v4
+        with:
+            cmd: install
+     
+      - name: Yarn build assets
+        uses: borales/actions-yarn@v4
+        with:
+            cmd: build
+
+      - name: Copy files to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          password: ${{ secrets.PASSWORD }}
+          source: 'dist/*'
+          target: ${{ secrets.REMOTE_DIR }}
+          strip_components: 1
+          rm: true
+
+
+
+
