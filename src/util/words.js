@@ -12977,8 +12977,16 @@ const allowedGuesses = [
 ]
 
 export function getWordOfTheDay() {
-  const idx = Math.floor(Math.random() * answers.length)
-  return answers[idx]
+  // https://github.com/yyx990803/vue-wordle/blob/main/src/words.ts#L17-L24
+  const now = new Date()
+  const start = new Date(now.getFullYear(), 0, 0)
+  const diff = Number(now) - Number(start)
+  let day = Math.floor(diff / (1000 * 60 * 60 * 24))
+  while (day > answers.length) {
+    day -= answers.length
+  }
+
+  return answers[day]
 }
 
 export const allWords = [...answers, ...allowedGuesses]
