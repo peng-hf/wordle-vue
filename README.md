@@ -4,6 +4,8 @@ Clone of the popular [Wordle](https://www.nytimes.com/games/wordle) game impleme
 
 [Demo here](http://wordle-vue.lyfing.dev)
 
+![Screenshot](demo-light.png)
+
 ## Local setup
 
 ```shell
