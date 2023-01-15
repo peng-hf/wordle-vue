@@ -1,6 +1,6 @@
 # Wordle Vue
 
-Clone of the popular [Wordle](https://www.nytimes.com/games/wordle) game implemented with Vue 3 and Vite.
+Clone of the popular [Wordle](https://www.nytimes.com/games/wordle) game implemented with Vue 3/Vite and WindiCSS.
 
 [Demo here](http://wordle-vue.lyfing.dev)
 
