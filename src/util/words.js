@@ -12978,7 +12978,6 @@ const allowedGuesses = [
 
 export function getWordOfTheDay() {
   const idx = Math.floor(Math.random() * answers.length)
-  console.log('idx random', idx)
   return answers[idx]
 }
 

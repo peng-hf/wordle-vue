@@ -11,16 +11,23 @@ import {
   loadSettings,
   saveSettings,
   resetGame,
-  isMobileOrTablet
+  isMobileOrTablet,
+  setDocHeight
 } from './util'
 import Grid from './components/Grid.vue'
 import Keyboard from './components/Keyboard.vue'
 import Messages from './components/Messages.vue'
 
+setDocHeight()
+
 const word = getWordOfTheDay()
 const game = reactive(loadGame())
 const settings = reactive(loadSettings())
 let messages = $ref([])
+
+window.___DEBUG_GET_ANSWER__ = () => {
+  console.log(`Answer is ${word}`)
+}
 
 const currentAnswer = $computed(() => {
   return game.matrix[game.currentRowIdx].map(c => c.letter).join('')
@@ -163,9 +170,7 @@ async function onPressKey(key) {
 </script>
 
 <template>
-  <div
-    class="relative h-screen w-screen flex flex-col bg-light-600 dark:bg-dark-900 overflow-hidden"
-  >
+  <div class="h-full relative flex flex-col bg-light-600 dark:bg-dark-900 overflow-hidden">
     <!-- Error messages -->
     <messages :messages="messages" />
 
