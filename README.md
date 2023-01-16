@@ -6,6 +6,16 @@ Clone of the popular [Wordle](https://www.nytimes.com/games/wordle) game impleme
 
 ![Screenshot](demo-light.png)
 
+
+## Rules
+- Six tries to guess the word
+- Each guess must be a valid 5-letter English word
+- The color tile change to show how you are to the word
+- Tile color
+  - 🟩 Letter is in the correct spot 
+  - 🟧 Letter is in the word but in the wrong spot 
+  - ⬛ Letter is not in the word
+
 ## Local setup
 
 ```shell
