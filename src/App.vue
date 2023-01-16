@@ -12,7 +12,8 @@ import {
   saveSettings,
   resetGame,
   isMobileOrTablet,
-  setDocHeight
+  setDocHeight,
+  isKeyPresent
 } from './util'
 import Grid from './components/Grid.vue'
 import Keyboard from './components/Keyboard.vue'
@@ -27,6 +28,10 @@ let messages = $ref([])
 
 window.___DEBUG_GET_ANSWER__ = () => {
   console.log(`Answer is ${word}`)
+}
+
+window.___DEBUG_RESET__ = () => {
+  restartGame()
 }
 
 const currentAnswer = $computed(() => {
@@ -162,8 +167,11 @@ async function onPressKey(key) {
       nextEmptyCell.letter = key
       if (word[nextEmptyCellIdx] === key) {
         nextEmptyCell.state = CELL_STATE.CORRECT
-      } else if (word.includes(key)) nextEmptyCell.state = CELL_STATE.PRESENT
-      else nextEmptyCell.state = CELL_STATE.ABSENT
+      } else if (isKeyPresent(key, currentAnswer, word)) {
+        nextEmptyCell.state = CELL_STATE.PRESENT
+      } else {
+        nextEmptyCell.state = CELL_STATE.ABSENT
+      }
     }
   }
 }

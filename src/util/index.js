@@ -120,3 +120,24 @@ export function setDocHeight() {
   // On mobile browser, address bar is sometimes visible and sometimes hidden, changing the visible size of the viewport
   document.body.style.setProperty('--w-inner-height', `${window.innerHeight}px`)
 }
+
+export function isKeyPresent(key, answer, word) {
+  let countKeyInAnswer = answer.split('').reduce((acc, l) => {
+    if (key === l) acc++
+    return acc
+  }, 0)
+
+  let present = false
+  for (const letter of word.split('')) {
+    if (letter === key) {
+      if (countKeyInAnswer > 1) {
+        countKeyInAnswer--
+        continue
+      } else {
+        present = true
+        break
+      }
+    }
+  }
+  return present
+}
