@@ -12,14 +12,11 @@ import {
   saveSettings,
   resetGame,
   isMobileOrTablet,
-  setDocHeight,
   isKeyPresent
 } from './util'
 import Grid from './components/Grid.vue'
 import Keyboard from './components/Keyboard.vue'
 import Messages from './components/Messages.vue'
-
-setDocHeight()
 
 const word = getWordOfTheDay()
 const game = reactive(loadGame())
@@ -203,12 +200,7 @@ async function onPressKey(key) {
 
     <div class="flex flex-col flex-1 items-center justify-between">
       <div class="flex flex-1 items-center">
-        <grid
-          class="sm:my-30px"
-          :matrix="game.matrix"
-          :current-row-idx="game.currentRowIdx"
-          :word="word"
-        />
+        <grid :matrix="game.matrix" :current-row-idx="game.currentRowIdx" :word="word" />
       </div>
       <keyboard
         class="sm:my-20px <sm:mb-20px"

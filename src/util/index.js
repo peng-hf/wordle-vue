@@ -116,11 +116,6 @@ export function isMobileOrTablet() {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
 }
 
-export function setDocHeight() {
-  // On mobile browser, address bar is sometimes visible and sometimes hidden, changing the visible size of the viewport
-  document.body.style.setProperty('--w-inner-height', `${window.innerHeight}px`)
-}
-
 export function isKeyPresent(key, answer, word) {
   let countKeyInAnswer = answer.split('').reduce((acc, l) => {
     if (key === l) acc++
