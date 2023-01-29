@@ -23,6 +23,9 @@ $ yarn install
 $ yarn dev
 ```
 
+## Requirements
+- Compatible with node 18
+
 ## Features
 - New word every day
 - Animation
