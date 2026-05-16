@@ -52,16 +52,16 @@ On mobile, tap anywhere on the end-of-game message to restart.
 Requires **Node 18+**.
 
 ```sh
-yarn install
-yarn dev
+npm install
+npm run dev
 ```
 
 Other available scripts:
 
 ```sh
-yarn build    # production build
-yarn preview  # preview the production build locally
-yarn lint     # lint with ESLint
+npm run build    # production build
+npm run preview  # preview the production build locally
+npm run lint     # lint with ESLint
 ```
 
 ## License
